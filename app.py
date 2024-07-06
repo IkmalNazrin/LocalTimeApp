@@ -1,12 +1,9 @@
-import os
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from config import Config  # Import the Config class
 
 app = Flask(__name__)
-
-# PostgreSQL configurations from environment variables
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}/{os.getenv('POSTGRES_DB')}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object(Config)  # Load configurations from Config class
 
 db = SQLAlchemy(app)
 
