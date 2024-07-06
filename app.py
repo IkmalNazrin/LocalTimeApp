@@ -5,7 +5,7 @@ import sys
 app = Flask(__name__)
 
 # PostgreSQL configurations
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://local_time_project_user:hq66YiC5TBxamPoxdvCS67hR8wnFFsk1@dpg-cq4c2jdd578s73chuln0-a/local_time_project'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://local_time_project_user:hq66YiC5TBxamPoxdvCS67hR8wnFFsk1@dpg-cq4c2jdd578s73chuln0-a:5432/local_time_project'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -16,7 +16,7 @@ def receive_local_time():
         try:
             data = request.json
             received_time = data['localTime']
-            
+
             print("Attempting to connect to PostgreSQL...", file=sys.stderr)
             try:
                 conn = db.engine.connect()
@@ -27,11 +27,11 @@ def receive_local_time():
             except Exception as e:
                 print(f"Unexpected error when connecting to PostgreSQL: {str(e)}", file=sys.stderr)
                 return jsonify({"error": f"Unexpected error when connecting to PostgreSQL: {str(e)}"}), 500
-            
+
             print("Executing SQL query...", file=sys.stderr)
             conn.execute("INSERT INTO time_functions (function_name, last_updated) VALUES (%s, %s)", ('send_local_time', received_time))
             conn.close()
-            
+
             return jsonify({"message": "Time received and stored successfully"})
         except Exception as e:
             print(f"Unexpected error: {str(e)}", file=sys.stderr)
