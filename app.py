@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -14,8 +14,6 @@ db = SQLAlchemy(app)
 def test_db_connection():
     try:
         conn = db.engine.connect()
-        if conn is None:
-            return "PostgreSQL connection is None", 500
         result = conn.execute("SELECT current_database()")
         db_name = result.fetchone()
         conn.close()
