@@ -10,6 +10,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+@app.route('/')
+def index():
+    return "Welcome to the Local Time Project API!"
+
 @app.route('/test_db_connection')
 def test_db_connection():
     try:
