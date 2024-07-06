@@ -1,18 +1,6 @@
-import MySQLdb
+import os
 
-try:
-    conn = MySQLdb.connect(
-        host='localhost',
-        user='starlight',
-        password='St@rLight1',
-        database='local_time_db'
-    )
-    cursor = conn.cursor()
-    cursor.execute("SELECT DATABASE()")
-    result = cursor.fetchone()
-    print(f"Connected to database: {result}")
-    cursor.close()
-    conn.close()
-except MySQLdb.Error as e:
-    print(f"Error connecting to MySQL: {e}")
+class Config:
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://local_time_project_user:hq66YiC5TBxamPoxdvCS67hR8wnFFsk1@dpg-cq4c2jdds78s73chu1n0-a/local_time_project')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 

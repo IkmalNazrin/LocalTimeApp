@@ -1,9 +1,11 @@
+import os
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from config import Config  # Import the Config class
 
 app = Flask(__name__)
-app.config.from_object(Config)  # Load configurations from Config class
+
+# Load configuration from Config class
+app.config.from_object('config.Config')
 
 db = SQLAlchemy(app)
 
