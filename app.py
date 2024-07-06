@@ -1,12 +1,10 @@
-import os
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import SQLAlchemyError
+import socket
 
 app = Flask(__name__)
-
-# Load configuration from Config class
 app.config.from_object('config.Config')
-
 db = SQLAlchemy(app)
 
 @app.route('/')
@@ -16,14 +14,21 @@ def index():
 @app.route('/test_db_connection')
 def test_db_connection():
     try:
-        conn = db.engine.connect()
-        result = conn.execute("SELECT current_database()")
-        db_name = result.fetchone()
-        conn.close()
-        return f"Connected to database: {db_name[0]}", 200
-    except Exception as e:
+        # Try to resolve the hostname
+        host = app.config['POSTGRES_HOST']
+        ip = socket.gethostbyname(host)
+        app.logger.info(f"Resolved {host} to {ip}")
+        
+        # Test database connection
+        with db.engine.connect() as connection:
+            result = connection.execute("SELECT 1")
+            return f"Database connection successful. Resolved IP: {ip}", 200
+    except socket.gaierror as e:
+        return f"Error resolving hostname: {str(e)}", 500
+    except SQLAlchemyError as e:
         return f"Error connecting to PostgreSQL: {str(e)}", 500
+    except Exception as e:
+        return f"Unexpected error: {str(e)}", 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
-
+    app.run(debug=True)
