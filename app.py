@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 import socket
@@ -30,5 +30,15 @@ def test_db_connection():
     except Exception as e:
         return f"Unexpected error: {str(e)}", 500
 
+@app.route('/api/localtime', methods=['POST'])
+def local_time():
+    data = request.get_json()
+    local_time = data.get('localTime')
+    if local_time:
+        return jsonify({"message": f"Received local time: {local_time}"}), 200
+    else:
+        return jsonify({"error": "No local time provided"}), 400
+
 if __name__ == '__main__':
     app.run(debug=True)
+
